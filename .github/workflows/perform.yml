@@ -5,31 +5,9 @@ on:
     branches:
       - main
 
-jobs:
-#   build-image:
-#     name: Build Images
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       - name: Checkout Repository
-#         uses: actions/checkout@v4 
-
-#       - name: Build PHPCrypfish Image
-#         run: |
-#           docker build -t phpcrypfish:latest .
-
-#       - name: Save PHPCrypfish Image to Artifact
-#         run: docker save -o /tmp/phpcrypfish.tar phpcrypfish:latest
-
-#       - name: Upload Artifact
-#         uses: actions/upload-artifact@v3
-#         with:
-#           name: phpcrypfish
-#           path: /tmp/phpcrypfish.tar
-          
+jobs:         
   dast:
     name: Performance Analysis
-    # needs: build-image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -38,15 +16,6 @@ jobs:
       - name: Create isolated network
         run: docker network create --driver bridge isolated 
 
-    #   - name: Download image from artifact
-    #     uses: actions/download-artifact@v3
-    #     with:
-    #       name: phpcrypfish
-    #       path: /tmp
-      
-    #   - name: Load saved image
-    #     run: docker load < /tmp/phpcrypfish.tar
-
       - name: Run PHPCrypfish Container
         run: docker-compose up -d
 
@@ -54,19 +23,16 @@ jobs:
         run: |
               pwd
               ls -la
-      #       ls -la db/
-              
+
       - name: Copy source code to PHPCrypfish container
         run: docker cp web2/. blowfish-apache:/var/www/html
 
       - name: Obfuscate
         run: docker exec blowfish-apache php -r "PHPCrypfish::obfuscate('/var/www/html/');"
 
-      # Add a step to copy the obfuscated code back to the runner's filesystem
       - name: Copy code from container
         run: docker cp blowfish-apache:/var/www/html ./obfuscated_code
       
-      # Upload the code as an artifact
       - name: Upload code as artifact
         uses: actions/upload-artifact@v3
         with:
@@ -77,7 +43,6 @@ jobs:
         run: |
           docker exec blowfish-apache ls -la /var/www/html/
           docker exec blowfish-apache cat /var/www/html/index.php
-      #   docker exec blowfish-apache php /var/www/html/cek_koneksi.php
 
       - name: Get AUT URL
         run: |
