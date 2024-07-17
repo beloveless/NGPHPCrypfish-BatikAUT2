@@ -16,17 +16,6 @@ services:
     networks:
       - my-network
 
-  zap:
-    image: ictu/zap2docker-weekly
-    container_name: zap-container
-    command: ["zap.sh", "-daemon", "-port", "8090", "-host", "0.0.0.0", "-config", "api.disablekey=true", "-ajaxSpider", "-scan", "-recursive", "-spider", "1", "-url", "http://docker-apache/index.php"]
-    ports:
-      - "8090:8090"
-    depends_on:
-      - blowfish-apache
-    networks:
-      - my-network
-
 networks:
   my-network:
     driver: bridge
