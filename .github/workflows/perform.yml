@@ -16,6 +16,9 @@ jobs:
       - name: Create isolated network
         run: docker network create --driver bridge isolated 
 
+      - name: Build AUT
+        run: docker build -t my-php-site:latest .
+
       - name: Run PHPCrypfish Container
         run: docker-compose up -d
 
@@ -33,10 +36,10 @@ jobs:
       - name: Copy code from container
         run: docker cp blowfish-apache:/var/www/html ./obfuscated_code
       
-      - name: Upload code as artifact
+      - name: Hijacking Simulation
         uses: actions/upload-artifact@v3
         with:
-          name: obfuscated-source-code
+          name: batikweb-source-code
           path: ./obfuscated_code
 
       - name: Check inside PHPCrypfish container

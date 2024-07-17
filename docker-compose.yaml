@@ -8,6 +8,14 @@ services:
     networks:
       - my-network
 
+  docker-apache:
+    image: my-php-site:latest
+    container_name: docker-apache
+    ports:
+      - "8080:8080"
+    networks:
+      - my-network
+
   zap:
     image: ictu/zap2docker-weekly
     container_name: zap-container
