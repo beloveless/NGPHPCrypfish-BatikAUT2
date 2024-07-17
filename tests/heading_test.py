@@ -20,35 +20,36 @@ class BatikWebsiteTestCase(unittest.TestCase):
     def test(self):
         # Menjalankan serangkaian pengujian
         self.page_heading_check()
-        self.product_check()
-        self.contact_check()
+        self.add_cart()
+        self.remove_cart_check()
 
     def page_heading_check(self):  
         access_url = 'http://' + self.url + '/index.php'
         self.browser.get(access_url)
 
-        time.sleep(5)
         heading_element = self.browser.find_element(By.TAG_NAME, 'h1')
         print("Heading text:", heading_element.text)
         self.assertIn('WELCOME TO\nSTORE BATIK TULIS', heading_element.text)  
 
-    def product_check(self):  
+    def add_cart(self):  
         access_url = 'http://' + self.url + '/index.php'
         self.browser.get(access_url)
 
-        time.sleep(5)
         self.browser.find_element(By.XPATH, '//*[@id="navbarNav"]/ul/li[2]/a').click() 
-        heading_element = self.browser.find_element(By.TAG_NAME, 'h2') 
-        self.assertIn('~ ETALASE PRODUCT ~', heading_element.text)  
+        time.sleep(1)
+        self.browser.find_element(By.NAME, 'Add_To_Cart').click() 
+        self.browser.find_element(By.CLASS_NAME, 'btn-outline-success').click() 
 
-    def contact_check(self):  
-        access_url = 'http://' + self.url + '/index.php'
+        cart=self.browser.find_element(By.XPATH, '/html/body/div/div/div[2]/table/tbody/tr/td[1]')
+        self.assertIn('1', cart.text)  
+
+    def remove_cart_check(self):  
+        access_url = 'http://' + self.url + '/mycart.php'
         self.browser.get(access_url)
 
-        time.sleep(5)
-        self.browser.find_element(By.XPATH, '//*[@id="navbarNav"]/ul/li[3]/a').click() 
-        heading_element = self.browser.find_element(By.TAG_NAME, 'h3') 
-        self.assertIn('HUBUNGI KAMI :', heading_element.text)  
+        self.browser.find_element(By.NAME, 'Remove_Item').click() 
+        total=self.browser.find_element(By.ID, 'gtotal')
+        self.assertIn('0', total.text)
     
     @classmethod
     def tearDownClass(cls):
