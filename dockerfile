@@ -11,6 +11,6 @@ RUN apt-get update && \
 WORKDIR /var/www/html
 
 #copy code to var/www/html
-COPY ./src ./
+COPY ./web2 ./
 
 EXPOSE 80
